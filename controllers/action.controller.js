@@ -21,7 +21,7 @@ import { eq } from "drizzle-orm";
 export const createLead = async (data) => {
   const id = uuidv4();
   try {
-   const user =  await db.insert(leads).values({
+   const [user] =  await db.insert(leads).values({
       id,
       name: data.name || null,
       source: data.source || null,
@@ -76,7 +76,7 @@ export const updateLaddById = async (id, updates) => {
       updatedAt: new Date(),
     };
 
-    const updated = await db.update(leads).set(cleanedUpdates).where(eq(leads.id, id)).returning();
+    const [updated] = await db.update(leads).set(cleanedUpdates).where(eq(leads.id, id)).returning();
 
     return { success: true, updated, command: "updateLeadById" };
   } catch (error) {
