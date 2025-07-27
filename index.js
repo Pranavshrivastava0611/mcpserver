@@ -7,9 +7,7 @@ import { mcpRouter } from "./router/mcp.route.js";
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
-cors({
-
-})
+cors({})
 
 //middleware;
 app.use(cors());
@@ -18,6 +16,6 @@ app.use(express.json());
 app.use("/api/mcp/execute",mcpRouter);
 
 
-server.listen(5174,()=>{
-    console.log("server is running on 5174");
-})
+server.listen(process.env.PORT || 5174, () => {
+  console.log("server is running");
+});
