@@ -50,7 +50,7 @@ export const getAllLeads = async()=>{
 }
 export const getLeadById = async (id)=>{
     try{
-        const lead = db.select().from(leads).where(eq(leads.id,id));
+        const [lead] = await db.select().from(leads).where(eq(leads.id,id));
        return { success: true, lead,command : "getLeadById" };
     }catch(error){
         console.log("error in getLeadById:", error);
