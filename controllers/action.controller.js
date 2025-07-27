@@ -21,7 +21,7 @@ import { eq } from "drizzle-orm";
 export const createLead = async (data) => {
   const id = uuidv4();
   try {
-    await db.insert(leads).values({
+   const user =  await db.insert(leads).values({
       id,
       name: data.name || null,
       source: data.source || null,
@@ -30,9 +30,9 @@ export const createLead = async (data) => {
       interestedProducts: data.interestedProducts || [],
       status: data.status || 'New',
       notes: data.notes || null,
-    });
+    }).returning();
 
-    return { success: true, id };
+    return { success: true, user,command : "createLead" };
   } catch (error) {
     console.error("Failed to create lead:", error);
     return { success: false, error: error.message };
@@ -42,7 +42,7 @@ export const getAllLeads = async()=>{
     try{
        const leadss = await db.select().from(leads).orderBy(leads.createdAt);
         console.log("leadss:", leadss);
-        return { success: true, leadss };
+        return { success: true, leadss, command: "getAllLeads" };
     }catch(error){
         console.log("error in getAllLeads:", error);
         throw new Error("Failed to fetch lead");
@@ -51,7 +51,7 @@ export const getAllLeads = async()=>{
 export const getLeadById = async (id)=>{
     try{
         const lead = db.select().from(leads).where(eq(leads.id,id));
-        return lead;
+       return { success: true, lead,command : "getLeadById" };
     }catch(error){
         console.log("error in getLeadById:", error);
         throw new Error("Failed to fetch lead");
@@ -76,9 +76,9 @@ export const updateLaddById = async (id, updates) => {
       updatedAt: new Date(),
     };
 
-    await db.update(leads).set(cleanedUpdates).where(eq(leads.id, id));
+    const updated = await db.update(leads).set(cleanedUpdates).where(eq(leads.id, id)).returning();
 
-    return { success: true };
+    return { success: true, updated, command: "updateLeadById" };
   } catch (error) {
     console.error("Error in updateLeadById:", error);
     throw new Error("Failed to update lead");
@@ -88,7 +88,7 @@ export const updateLaddById = async (id, updates) => {
 export const deleteLeadById = async (id)=>{
     try{
            await db.delete(leads).where(eq(leads.id, id));
-        return { success: true };
+        return { success: true,command : "deleteLeadById" };
     }catch(error){
         console.log("error in deleteLeadById:", error); 
         throw new Error("Failed to delete lead");
